@@ -97,7 +97,7 @@ export default function AdminDashboard() {
   const [adminName, setAdminName] = useState('');
   const [allStudents, setAllStudents] = useState([]); // Ensure allStudents is properly set
 
-  const url = 'http://localhost:5000/admin/admindashboard';
+  const url = 'https://tazeracademybackend.onrender.com/admin/admindashboard';
   let token = localStorage.adminToken;
   const navigate = useNavigate();
 

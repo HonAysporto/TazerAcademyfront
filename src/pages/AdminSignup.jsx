@@ -11,7 +11,7 @@ import * as Yup from 'yup'
 const AdminSignup = () => {
 
 
-let url = "http://localhost:5000/admin/signup"
+let url = "https://tazeracademybackend.onrender.com/admin/signup"
 
 
     

@@ -122,7 +122,7 @@ export default function DashboardProfile() {
   };
 
   const [userinfo, setuserinfo] = useState([])
-  const url = "http://localhost:5000/student/dashboard"
+  const url = "https://tazeracademybackend.onrender.com/student/dashboard"
   let token = localStorage.token
   const navigate = useNavigate()
 

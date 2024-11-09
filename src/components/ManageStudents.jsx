@@ -7,8 +7,8 @@ const ManageStudents = () => {
   const [studentList, setStudentList] = useState(students); // Local state for students
   const [editStudent, setEditStudent] = useState(null); // State to hold the student data being edited
 
-  const url = 'http://localhost:5000/admin/delete';
-  const updateUrl = 'http://localhost:5000/admin/edit'; // Assume you have an update API
+  const url = 'https://tazeracademybackend.onrender.com/admin/delete';
+  const updateUrl = 'https://tazeracademybackend.onrender.com/admin/edit'; // Assume you have an update API
 
   // Handle the edit action: Open a form with pre-filled data
   const handleEdit = (studentId) => {

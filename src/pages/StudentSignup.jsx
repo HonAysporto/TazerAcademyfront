@@ -10,7 +10,7 @@ import * as Yup from 'yup'
 
 
 
-let url = "http://localhost:5000/student/signup"
+let url = "https://tazeracademybackend.onrender.com/student/signup"
 
 
 
