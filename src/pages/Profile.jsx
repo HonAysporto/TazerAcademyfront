@@ -1,73 +1,64 @@
-import React from 'react'
+import React from 'react';
 
-const Profile = ({userinfo}) => {
-  const student = userinfo[0]
-  console.log(student);
+const Profile = ({ userinfo }) => {
+  const student = userinfo && userinfo.length > 0 ? userinfo[0] : null;
 
-  const user = userinfo && userinfo.length > 0 ? userinfo[0] : null;
-
-  if (!user) {
+  if (!student) {
     // Fallback UI while data is loading
     return <p>Loading...</p>;
   }
-  
+
   return (
+    <div className="container mx-auto p-4 md:px-8 lg:px-16">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Welcome, {student.firstname} {student.lastname}</h1>
 
-    <>
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="flex flex-col items-center justify-center shadow-lg rounded-md p-4 bg-gray-100">
+          <p className="text-xl font-bold">{student.matricNo}</p>
+          <p className="text-sm text-gray-600">Matric Number</p>
+        </div>
 
-     
-        <div>
-            
-          <h1 className='text-sm text-gray-800 mb-7'>Welcome, {student.firstname} {student.lastname}</h1>
+        <div className="flex flex-col items-center justify-center shadow-lg rounded-md p-4 bg-gray-100">
+          <p className="text-xl font-bold">{student.currentLevel}</p>
+          <p className="text-sm text-gray-600">Current Level</p>
+        </div>
 
-          <div className='flex flex-wrap text-center justify-around'>
-            <div className='flex text-center justify-center flex-col shadow-md rounded-md p-3 px-7 bg-gray-100 mb-3'>
-              <p className='text-xl font-bold'>{student.matricNo}</p>
-              <p className='text-sm'>Matric Number</p>
-            </div>
+        <div className="flex flex-col items-center justify-center shadow-lg rounded-md p-4 bg-gray-100">
+          <p className="text-xl font-bold">{student.result}</p>
+          <p className="text-sm text-gray-600">Current CGPA</p>
+        </div>
 
-            <div className='flex text-center justify-center flex-col shadow-md rounded-md p-3 px-7 bg-gray-100 mb-3'>
-              <p className='text-xl font-bold'>{student.currentLevel}</p>
-              <p className='text-sm'>Current Level</p>
-            </div>
+        <div className="flex flex-col items-center justify-center shadow-lg rounded-md p-4 bg-gray-100">
+          <p className="text-xl font-bold">{student.department}</p>
+          <p className="text-sm text-gray-600">Department</p>
+        </div>
+      </div>
 
-            <div className='flex text-center justify-center flex-col shadow-md rounded-md p-3 px-7 bg-gray-100 mb-3'>
-              <p className='text-xl font-bold'>{student.result}</p>
-              <p className='text-sm'>Current CGPA</p>
-            </div>
-
-            <div className='flex text-center justify-center flex-col shadow-md rounded-md p-3 px-7 bg-gray-100 mb-3'>
-              <p className='text-xl font-bold'>{student.department}</p>
-              <p className='text-sm'>Department</p>
-            </div>
-          </div>
-
-          <div className='flex text-center justify-between mt-7'>
-            <div className='w-2/5 bg-green-100'>
-              {/* Personal Information */}
-                <h1 className='font-bold'>Personal Information</h1>
-
-                <div className='mt-3 flex flex-col text-start ps-2'>
-                  <h1>Surname: <span>{student.firstname}</span></h1>
-                  <h1>First Name: <span>{student.lastname}</span></h1>
-                  <h1>Email: <span>{student.email}</span></h1>
-                </div>
-        
-
-            </div>
-
-            <div className='w-2/5 bg-red-100'>
-              {/* Notice Board */}
-              <h1 className='font-bold'>Notice board</h1>
-
-              <div className='flex justify-center text-center h-96'>
-                    
-              </div>
-            </div>
+      {/* Personal Information and Notice Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        {/* Personal Information */}
+        <div className="bg-green-50 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
+          <div className="space-y-3">
+            <h3 className="text-lg">Surname: <span className="font-medium">{student.lastname}</span></h3>
+            <h3 className="text-lg">First Name: <span className="font-medium">{student.firstname}</span></h3>
+            <h3 className="text-lg">Email: 
+              <span className="font-medium text-blue-600 truncate">{student.email}</span>
+            </h3>
           </div>
         </div>
-    </>
-  )
-}
 
-export default Profile
+        {/* Notice Board */}
+        <div className="bg-red-50 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Notice Board</h2>
+          <div className="h-96 flex items-center justify-center text-gray-500">
+            <p>No notices available at the moment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
