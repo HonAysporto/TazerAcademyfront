@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import spark from "../assets/spark.png";
 
-const sendUrl = "http://localhost:5000/admin/sendnotice"; // POST
-const getNoticeUrl = "http://localhost:5000/admin/getnotice"; // GET
+const sendUrl = "https://tazeracademybackend.onrender.com/admin/sendnotice"; // POST
+const getNoticeUrl = "https://tazeracademybackend.onrender.com/admin/getnotice"; // GET
 
 const SendNotice = () => {
   const [loading, setLoading] = useState(false);
