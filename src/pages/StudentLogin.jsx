@@ -1,134 +1,191 @@
-import React from 'react'
-import { Formik, useFormik  } from 'formik'
-import spark from "../assets/spark.png"
-import * as Yup from 'yup'
-import { Link } from "react-router-dom";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import spark from "../assets/spark.png";
+import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
+import Navba from "../components/Navba";
 
-
-
-let url = "https://tazeracademybackend.onrender.com/student/signin"
+const url = "http://localhost:5000/student/signin";
 
 const StudentLogin = () => {
-
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-   let formik = useFormik({
-    initialValues : {
+  const formik = useFormik({
+    initialValues: {
       email: "",
-      password: ""
+      password: "",
     },
-    onSubmit : (values)=> {
-      console.log(values);
-      axios.post(url, values).then((response)=> {
-        if(!response.data.status) {
-          console.log(response.data.message);
-          // alert(response.data.message)
-        } else {
-          console.log(response.data.message)
-          // alert(response.data.message)
-          localStorage.token = response.data.token
-          navigate('/dashboard/profile')
-        }
-      })
-    }, 
-
     validationSchema: Yup.object({
-      email: Yup.string().required('This field is required').email("must be an email"),
-      password: Yup.string().required('This field is required')
-    })
-   })
+      email: Yup.string()
+        .email("Enter a valid email")
+        .required("Email is required"),
+      password: Yup.string().required("Password is required"),
+    }),
+    onSubmit: (values) => {
+      setLoading(true);
 
+      axios
+        .post(url, values)
+        .then((response) => {
+          if (response.data.status) {
+            localStorage.token = response.data.token;
+            toast.success("Login successful 🎉");
+            navigate("/dashboard/profile");
+          } else {
+            toast.error(response.data.message || "Invalid login details");
+          }
+        })
+        .catch(() => {
+          toast.error("Something went wrong. Please try again.");
+        })
+        .finally(() => setLoading(false));
+    },
+  });
 
- 
- 
   return (
-
     <>
- 
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8  bg-purple-100">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm ">
-        <img
-          className="mx-auto h-10 w-auto"
-          src={spark}
-          alt="Your Company"
-        />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Student Account
-        </h2>
-      </div>
+     <Navba />
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 px-4">
+      {/* Toasts */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#1e1b4b", // dark indigo
+            color: "#fff",
+          },
+          success: {
+            iconTheme: {
+              primary: "#facc15", // gold
+              secondary: "#1e1b4b",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444", // red
+              secondary: "#1e1b4b",
+            },
+          },
+        }}
+      />
 
-      <div className="mt-10 pb-40 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" action="#" method="POST" onSubmit={formik.handleSubmit}>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/20" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative w-full max-w-md rounded-3xl bg-white/90 p-8 shadow-2xl backdrop-blur-lg"
+      >
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <img src={spark} alt="Logo" className="mx-auto h-12" />
+          <h2 className="mt-4 text-2xl font-bold text-gray-900">
+            Student Login
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Access your dashboard and continue learning
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
+          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Email address
             </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                onChange={formik.handleChange}
-                value={formik.values.email}
-                onBlur={formik.handleBlur}
-                className={formik.touched.email && formik.errors.email  ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5 p-5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 p-5"}
-                />
-                <small className='text-red-500'>{formik.touched.email && formik.errors.email}</small>
-            </div>
+            <input
+              type="email"
+              name="email"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              className={`w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 ${
+                formik.touched.email && formik.errors.email
+                  ? "border-red-500 focus:ring-red-300"
+                  : "border-gray-300 focus:ring-indigo-400"
+              }`}
+            />
+            {formik.touched.email && formik.errors.email && (
+              <p className="mt-1 text-xs text-red-500">
+                {formik.errors.email}
+              </p>
+            )}
           </div>
 
+          {/* Password */}
           <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+            <div className="mb-1 flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="text-sm">
-                <Link to="/forgotpassword" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  Forgot password?
-                </Link>
-              </div>
+              <Link
+                to="/forgotpassword"
+                className="text-xs font-semibold text-indigo-600 hover:underline"
+              >
+                Forgot password?
+              </Link>
             </div>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.password}
-                  className={formik.touched.password && formik.errors.password   ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5 p-5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 p-5"}
-                  />
-                  <small className='text-red-500'>{formik.touched.password && formik.errors.password}</small>
-            </div>
+            <input
+              type="password"
+              name="password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+              className={`w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 ${
+                formik.touched.password && formik.errors.password
+                  ? "border-red-500 focus:ring-red-300"
+                  : "border-gray-300 focus:ring-indigo-400"
+              }`}
+            />
+            {formik.touched.password && formik.errors.password && (
+              <p className="mt-1 text-xs text-red-500">
+                {formik.errors.password}
+              </p>
+            )}
           </div>
 
-          <div>
-            <button
-              type="submit"
-
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Sign in
-            </button>
-          </div>
+          {/* Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full rounded-xl py-3 text-sm font-semibold text-white shadow-lg transition flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-500"
+            }`}
+          >
+            {loading ? (
+              <>
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Signing in...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </button>
         </form>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member?{' '}
-          <Link to="/studentsignup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Click here to sign up
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don’t have an account?{" "}
+          <Link
+            to="/studentsignup"
+            className="font-semibold text-indigo-600 hover:underline"
+          >
+            Create one
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
-  </>
-  )
-}
+    </>
+  );
+};
 
-export default StudentLogin
+export default StudentLogin;

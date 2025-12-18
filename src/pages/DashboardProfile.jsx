@@ -18,6 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useState,useEffect } from 'react';
 
 import axios from 'axios';
@@ -122,7 +124,7 @@ export default function DashboardProfile() {
   };
 
   const [userinfo, setuserinfo] = useState([])
-  const url = "https://tazeracademybackend.onrender.com/student/dashboard"
+  const url = "http://localhost:5000/student/dashboard"
   let token = localStorage.token
   const navigate = useNavigate()
 
@@ -198,7 +200,7 @@ export default function DashboardProfile() {
       ]}
     >
       <ListItemIcon sx={[{ minWidth: 0, justifyContent: 'center' }, open ? { mr: 3 } : { mr: 'auto' }]}>
-        <MailIcon />
+        <AccountBoxIcon />
       </ListItemIcon>
       <ListItemText primary="Profile" sx={[open ? { opacity: 1 } : { opacity: 0 }]} />
     </ListItemButton>
@@ -221,7 +223,7 @@ export default function DashboardProfile() {
       ]}
     >
       <ListItemIcon sx={[{ minWidth: 0, justifyContent: 'center' }, open ? { mr: 3 } : { mr: 'auto' }]}>
-        <MailIcon />
+        <LogoutIcon />
       </ListItemIcon>
       <ListItemText primary="Sign out" sx={[open ? { opacity: 1 } : { opacity: 0 }]} />
     </ListItemButton>

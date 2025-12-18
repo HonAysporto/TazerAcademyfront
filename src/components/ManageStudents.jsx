@@ -4,78 +4,64 @@ import axios from 'axios';
 
 const ManageStudents = () => {
   const { students } = useOutletContext();
-  const [studentList, setStudentList] = useState(students); // Local state for students
-  const [editStudent, setEditStudent] = useState(null); // State to hold the student data being edited
+  const [studentList, setStudentList] = useState(students);
+  const [editStudent, setEditStudent] = useState(null);
+  const [loading, setLoading] = useState(false); // Loader state
 
   const url = 'https://tazeracademybackend.onrender.com/admin/delete';
-  const updateUrl = 'https://tazeracademybackend.onrender.com/admin/edit'; // Assume you have an update API
+  const updateUrl = 'https://tazeracademybackend.onrender.com/admin/edit';
 
-  // Handle the edit action: Open a form with pre-filled data
   const handleEdit = (studentId) => {
     const student = studentList.find((student) => student._id === studentId);
     setEditStudent(student);
   };
 
-  // Handle updating the student data
-  const handleUpdate = () => {
-    if (!editStudent) return;  // Make sure there's a student to update
-    
-    // Send the updated student data including result, matricNo, department, and currentLevel
-    axios
-      .put(updateUrl, {
+  const handleUpdate = async () => {
+    if (!editStudent) return;
+    setLoading(true); // Show loader
+
+    try {
+      const response = await axios.put(updateUrl, {
         studentId: editStudent._id,
         firstname: editStudent.firstname,
         lastname: editStudent.lastname,
         email: editStudent.email,
-        result: editStudent.result,     // Include result
-        matricNo: editStudent.matricNo, // Include matric number
-        department: editStudent.department, // Include department
-        currentLevel: editStudent.currentLevel // Include current level
-      })
-      .then((response) => {
-        console.log('Updated student:', response.data);
-        
-        // Optimistically update the list of students
-        setStudentList((prevList) =>
-          prevList.map((student) =>
-            student._id === editStudent._id ? { ...student, ...editStudent } : student
-          )
-        );
-        
-        setEditStudent(null);  // Close the modal after successful update
-        alert('Student updated successfully');
-      })
-      .catch((error) => {
-        console.error('Error updating student:', error);
-        alert('Error updating student');
+        result: editStudent.result,
+        matricNo: editStudent.matricNo,
+        department: editStudent.department,
+        currentLevel: editStudent.currentLevel
       });
+
+      setStudentList((prevList) =>
+        prevList.map((student) =>
+          student._id === editStudent._id ? { ...student, ...editStudent } : student
+        )
+      );
+
+      setEditStudent(null);
+      alert('Student updated successfully');
+    } catch (error) {
+      console.error('Error updating student:', error);
+      alert('Error updating student');
+    } finally {
+      setLoading(false); // Hide loader
+    }
   };
 
-  // Handle changes in the edit form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditStudent((prevStudent) => ({
-      ...prevStudent,
-      [name]: value,
-    }));
+    setEditStudent((prevStudent) => ({ ...prevStudent, [name]: value }));
   };
 
-  // Handle delete action
-  const handleDelete = (studentId) => {
-    console.log('Deleting student with ID:', studentId);
-    axios
-      .post(url, { studentId })
-      .then((response) => {
-        console.log(response);
-        alert(response.data.message);
-        setStudentList((prevList) =>
-          prevList.filter((student) => student._id !== studentId)
-        );
-      })
-      .catch((error) => {
-        console.error('Error deleting student:', error);
-        alert('Error deleting student');
-      });
+  const handleDelete = async (studentId) => {
+    try {
+      const response = await axios.post(url, { studentId });
+      alert(response.data.message);
+      setStudentList((prevList) => prevList.filter((student) => student._id !== studentId));
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      alert('Error deleting student');
+    }
   };
 
   return (
@@ -92,8 +78,8 @@ const ManageStudents = () => {
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Result</th>
                 <th className="px-6 py-3">Matric No</th>
-                <th className="px-6 py-3">Department</th> {/* New column for department */}
-                <th className="px-6 py-3">Current Level</th> {/* New column for currentLevel */}
+                <th className="px-6 py-3">Department</th>
+                <th className="px-6 py-3">Current Level</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -105,17 +91,15 @@ const ManageStudents = () => {
                   <td className="px-6 py-4">{student.email}</td>
                   <td className="px-6 py-4">{student.result || 'N/A'}</td>
                   <td className="px-6 py-4">{student.matricNo || 'N/A'}</td>
-                  <td className="px-6 py-4">{student.department || 'N/A'}</td> {/* Display department */}
-                  <td className="px-6 py-4">{student.currentLevel || 'N/A'}</td> {/* Display currentLevel */}
+                  <td className="px-6 py-4">{student.department || 'N/A'}</td>
+                  <td className="px-6 py-4">{student.currentLevel || 'N/A'}</td>
                   <td className="px-6 py-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                    {/* Edit Button */}
                     <button
                       onClick={() => handleEdit(student._id)}
                       className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 focus:outline-none"
                     >
                       Edit
                     </button>
-                    {/* Delete Button */}
                     <button
                       onClick={() => handleDelete(student._id)}
                       className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600 focus:outline-none"
@@ -135,90 +119,103 @@ const ManageStudents = () => {
       {/* Modal for editing student */}
       {editStudent && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full sm:w-1/3">
+          <div className="bg-white p-6 rounded-lg w-full sm:w-1/3 relative">
+            {/* Loader */}
+            {loading && (
+              <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-50 rounded-lg">
+                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+
             <h2 className="text-xl font-semibold mb-4">Edit Student</h2>
-            <div className="mb-4">
-              <label className="block text-gray-700">First Name</label>
-              <input
-                type="text"
-                name="firstname"
-                value={editStudent.firstname || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700">First Name</label>
+                <input
+                  type="text"
+                  name="firstname"
+                  value={editStudent.firstname || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  name="lastname"
+                  value={editStudent.lastname || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={editStudent.email || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Result</label>
+                <input
+                  type="text"
+                  name="result"
+                  value={editStudent.result || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Matric Number</label>
+                <input
+                  type="text"
+                  name="matricNo"
+                  value={editStudent.matricNo || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Department</label>
+                <input
+                  type="text"
+                  name="department"
+                  value={editStudent.department || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Current Level</label>
+                <input
+                  type="text"
+                  name="currentLevel"
+                  value={editStudent.currentLevel || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Last Name</label>
-              <input
-                type="text"
-                name="lastname"
-                value={editStudent.lastname || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={editStudent.email || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            {/* New fields for result, matricNo, department, and currentLevel */}
-            <div className="mb-4">
-              <label className="block text-gray-700">Result</label>
-              <input
-                type="text"
-                name="result"
-                value={editStudent.result || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Matric Number</label>
-              <input
-                type="text"
-                name="matricNo"
-                value={editStudent.matricNo || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Department</label>
-              <input
-                type="text"
-                name="department"
-                value={editStudent.department || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Current Level</label>
-              <input
-                type="text"
-                name="currentLevel"
-                value={editStudent.currentLevel || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="flex justify-end space-x-2">
+
+            <div className="flex justify-end space-x-2 mt-4">
               <button
-                onClick={() => setEditStudent(null)} // Close modal
+                onClick={() => setEditStudent(null)}
                 className="bg-gray-500 text-white py-1 px-3 rounded-lg hover:bg-gray-600 focus:outline-none"
               >
                 Cancel
               </button>
               <button
-                onClick={handleUpdate} // Update student
-                className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 focus:outline-none"
+                onClick={handleUpdate}
+                disabled={loading}
+                className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 focus:outline-none flex items-center"
               >
+                {loading && (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                )}
                 Update
               </button>
             </div>

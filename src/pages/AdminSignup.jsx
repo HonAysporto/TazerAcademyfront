@@ -1,205 +1,142 @@
-import React from 'react'
-import { useState } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-import { Formik, useFormik  } from 'formik'
-import spark from "../assets/spark.png"
-import * as Yup from 'yup'
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import spark from "../assets/spark.png";
+import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
+import Navba from "../components/Navba";
 
+const url = "http://localhost:5000/admin/signup";
 
 const AdminSignup = () => {
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
-
-let url = "https://tazeracademybackend.onrender.com/admin/signup"
-
-
-    
-let formik = useFormik({
-    initialValues : {
+  const formik = useFormik({
+    initialValues: {
       firstname: "",
       lastname: "",
       email: "",
       password: "",
-      adminCode:""
+      adminCode: "",
     },
-    onSubmit : (values)=> {
-      console.log(values);
-      axios.post(url, values).then((response)=> {
-        if(!response.data.status) {
-          console.log(response.data.message);
-        
-  
-        } else {
-          console.log(response.data.message)
-          alert(response.data.message)
-          navigate('/adminlogin')
-  
-        }
-      })
-    },
-  
     validationSchema: Yup.object({
-      firstname: Yup.string().required('This field is required'),
-      lastname: Yup.string().required('This field is required').min(3, 'must be atleast 3 characters'),
-      email: Yup.string().required('This field is required').email("must be an email"),
-      password: Yup.string().required('This field is required'),
-      adminCode: Yup.string().required('This field is required')
-    })
-  })
-  console.log(formik.errors);
+      firstname: Yup.string().required("First name is required"),
+      lastname: Yup.string().min(3, "At least 3 characters").required("Last name is required"),
+      email: Yup.string().email("Enter a valid email").required("Email is required"),
+      password: Yup.string().required("Password is required"),
+      adminCode: Yup.string().required("Admin code is required"),
+    }),
+    onSubmit: (values) => {
+      setLoading(true);
+      axios
+        .post(url, values)
+        .then((response) => {
+          if (response.data.status) {
+            toast.success(response.data.message || "Admin account created successfully");
+            navigate("/adminlogin");
+          } else {
+            console.log(response);
+            toast.error(response.data.message || "Signup failed");
+          }
+        })
+        .catch(() => toast.error("Something went wrong. Please try again."))
+        .finally(() => setLoading(false));
+    },
+  });
 
   return (
     <>
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8  bg-purple-100">
-      <div>
-        
-      </div>
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-6 pt-3  pb-3  bg-purple-100rounded-t-md">
-          <img
-            className="mx-auto h-10 w-auto"
-            src={spark}
-            alt="Your Company"
-          />
-          <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-           Admin Signup
-          </h2>
+    <Navba />
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 px-4">
+      <div className="absolute inset-0 bg-black/40" />
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: { background: "#020617", color: "#fff" },
+          success: { iconTheme: { primary: "#22c55e", secondary: "#020617" } },
+          error: { iconTheme: { primary: "#ef4444", secondary: "#020617" } },
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative w-full max-w-md rounded-3xl bg-white/95 p-8 shadow-2xl backdrop-blur"
+      >
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <img src={spark} alt="Logo" className="mx-auto h-12" />
+          <h2 className="mt-4 text-2xl font-bold text-gray-900">Admin Registration</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Secure access for platform administrators
+          </p>
         </div>
-        
-        <div className=" sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-6 mb-6 mt-0 bg-purple-100 rounded-b-md">
-          <form className="space-y-6 " action="#" method="POST" onSubmit={formik.handleSubmit}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-             First Name
+
+        <form onSubmit={formik.handleSubmit} className="space-y-5">
+          {[
+            { name: "firstname", label: "First Name", type: "text" },
+            { name: "lastname", label: "Last Name", type: "text" },
+            { name: "email", label: "Email Address", type: "email" },
+            { name: "password", label: "Password", type: "password" },
+            { name: "adminCode", label: "Admin Code", type: "password" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                {field.label}
               </label>
-              <div className="mt-2">
-                <input
-                  id="firstname"
-                  name="firstname"
-                  type="text"
-                  autoComplete='name'
-                  required
-                  onChange={formik.handleChange}
-                  value={formik.values.firstname}
-                  onBlur={formik.handleBlur}
-          
-                  className={formik.touched.firstname && formik.errors.firstname   ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"}
-                /> 
-                <small className='text-red-500'>{formik.touched.firstname && formik.errors.firstname}</small>
-              </div>
+              <input
+                type={field.type}
+                name={field.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values[field.name]}
+                className={`w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 ${
+                  formik.touched[field.name] && formik.errors[field.name]
+                    ? "border-red-500 focus:ring-red-300"
+                    : "border-gray-300 focus:ring-indigo-400"
+                }`}
+              />
+              {formik.touched[field.name] && formik.errors[field.name] && (
+                <p className="mt-1 text-xs text-red-500">{formik.errors[field.name]}</p>
+              )}
             </div>
+          ))}
 
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full rounded-xl py-3 text-sm font-semibold text-white shadow-lg transition flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-500"
+            }`}
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Creating admin account...
+              </span>
+            ) : (
+              "Create Admin Account"
+            )}
+          </button>
+        </form>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Last Name
-              </label>
-              <div className="mt-2">
-                <input
-                  id="lastname"
-                  name="lastname"
-                  type="text"
-                  autoComplete="email"
-                  required
-                  onChange={formik.handleChange}
-                  value={formik.values.lastname}
-                  onBlur={formik.handleBlur}
-                  className={formik.touched.lastname && formik.errors.lastname   ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"}
-                />
-                <small className='text-red-500'>{formik.touched.lastname && formik.errors.lastname}</small>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                  onBlur={formik.handleBlur}
-                  className={formik.touched.email && formik.errors.email  ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"}
-                />
-                <small className='text-red-500'>{formik.touched.email && formik.errors.email}</small>
-              </div>
-            </div>
-
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                  Password
-                </label>
-               
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.password}
-                 
-                  className={formik.touched.password && formik.errors.password   ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"}
-                />
-                <small className='text-red-500'>{formik.touched.password && formik.errors.password}</small>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="adminCode" className="block text-sm font-medium leading-6 text-gray-900">
-                  Admin Code
-                </label>
-               
-              </div>
-              <div className="mt-2">
-                <input
-                  id="adminCode"
-                  name="adminCode"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.adminCode}
-                 
-                  className={formik.touched.adminCode && formik.errors.adminCode   ? "border-red-500 text-red-500 focus:outline-none focus:ring focus:border-red-500 block w-full rounded-md border-2 py-1.5" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"}
-                />
-                <small className='text-red-500'>{formik.touched.adminCode && formik.errors.adminCode}</small>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-              
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Register
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-10 text-center text-sm text-gray-500">
-          Already signed up?{' '}
-          <Link to="/adminlogin" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Click here to login
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Already an admin?{" "}
+          <Link to="/adminlogin" className="font-semibold text-indigo-600 hover:underline">
+            Sign in
           </Link>
         </p>
-        </div>
-      </div>
+      </motion.div>
+    </div>
     </>
-  )
-}
+  );
+};
 
-export default AdminSignup
+export default AdminSignup;
