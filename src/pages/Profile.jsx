@@ -11,7 +11,7 @@ const Profile = ({ userinfo }) => {
     const fetchNotice = async () => {
       try {
         const token = localStorage.getItem("token"); // Or wherever you store JWT
-        const response = await axios.get("http://localhost:5000/student/getnotice", {
+        const response = await axios.get("https://tazeracademybackend.onrender.com/student/getnotice", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data.status) {

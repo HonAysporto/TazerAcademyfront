@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import Navba from "../components/Navba";
 
-const url = "http://localhost:5000/admin/signup";
+const url = "https://tazeracademybackend.onrender.com/admin/signup";
 
 const AdminSignup = () => {
   const [loading, setLoading] = React.useState(false);

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import Navba from "../components/Navba";
 
-const url = "http://localhost:5000/student/signin";
+const url = "https://tazeracademybackend.onrender.com/student/signin";
 
 const StudentLogin = () => {
   const navigate = useNavigate();
