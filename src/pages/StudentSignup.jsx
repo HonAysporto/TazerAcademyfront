@@ -33,7 +33,7 @@ const StudentSignup = () => {
         .then((response) => {
           if (response.data.status) {
             toast.success(response.data.message || "Account created successfully");
-            navigate("/dashboard/profile");
+            navigate("/studentlogin");
           } else {
             toast.error(response.data.message || "Signup failed");
             console.log(response);
