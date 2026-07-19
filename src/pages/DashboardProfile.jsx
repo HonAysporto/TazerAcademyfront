@@ -54,17 +54,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: 'white', // Set the background color to white
-  color: 'black', // Set the text color to black (optional)
+  backgroundColor: 'white',
+  color: 'black',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -110,8 +108,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function DashboardProfile() {
-  
-
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -141,17 +137,14 @@ export default function DashboardProfile() {
         } else {
           let message = response.data.user
           setuserinfo([message])
-          console.log(userinfo);
-          
         }
       })
   }, [])
-  
-  
+
   const signout = () => {
     localStorage.token = ""
     navigate("/studentlogin")
-}
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -175,7 +168,7 @@ export default function DashboardProfile() {
 
             <div className='flex  justify-between w-100%'>
               <h1 className='text-2xl font-bold'>Dashboard</h1>
-            
+          
           </div>
         </Toolbar>
       </AppBar>
@@ -206,14 +199,9 @@ export default function DashboardProfile() {
     </ListItemButton>
   </ListItem>
 
-
-
-
-
   <ListItem disablePadding sx={{ display: 'block' }}>
     <ListItemButton
     onClick={()=> {signout()}}
-   
       sx={[
         {
           minHeight: 48,
