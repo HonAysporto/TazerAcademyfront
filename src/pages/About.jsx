@@ -8,13 +8,11 @@ const About = () => {
     <>
       <Navba />
 
-      {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 pt-28 pb-20">
         <div className="absolute inset-0 bg-white/10 backdrop-blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-4">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -24,7 +22,7 @@ const About = () => {
                 About <span className="text-yellow-300">TAZARH</span>
               </h1>
               <p className="mb-8 max-w-xl text-lg text-white/90">
-                TAZARH is a modern learning platform dedicated to helping students and professionals grow smarter and faster. Our mission is to bridge the gap between theory and real-world skills, providing hands-on learning experiences.
+                TAZARH is a modern learning platform dedicated to helping students and professionals grow smarter and faster. Our mission is to bridge the gap between theory and real-world skills,[...]
               </p>
               <div className="flex flex-wrap gap-4">
                 <a
@@ -42,7 +40,6 @@ const About = () => {
               </div>
             </motion.div>
 
-            {/* Right Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -57,7 +54,6 @@ const About = () => {
                 />
               </div>
 
-              {/* Decorative circles */}
               <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-yellow-400/30 blur-3xl" />
               <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-pink-400/30 blur-3xl" />
             </motion.div>
@@ -65,7 +61,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Mission Section */}
       <section id="mission" className="relative bg-white dark:bg-gray-900 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-16">
           <motion.div
@@ -79,11 +74,10 @@ const About = () => {
               Our Mission
             </h2>
             <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-xl">
-              To empower learners with practical skills and knowledge that are applicable in the real world. We focus on interactive learning, mentorship, and cutting-edge resources to create the ultimate learning experience.
+              To empower learners with practical skills and knowledge that are applicable in the real world. We focus on interactive learning, mentorship, and cutting-edge resources to create the ulti[...]
             </p>
           </motion.div>
 
-          {/* Mission Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: "Learn Faster", description: "Engage with hands-on projects and interactive lessons to accelerate your learning journey.", color: "bg-purple-600/80" },
@@ -106,7 +100,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Values Section */}
       <section id="values" className="relative bg-gray-50 dark:bg-gray-800 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-16">
           <motion.div
@@ -124,7 +117,6 @@ const About = () => {
             </p>
           </motion.div>
 
-          {/* Values Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { value: "Integrity", icon: "✅", color: "bg-yellow-400/30" },
@@ -148,7 +140,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
       <section className="relative bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 py-20 text-center text-white">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
