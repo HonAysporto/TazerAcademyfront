@@ -79,7 +79,7 @@ const AdminSignup = () => {
               { name: "lastname", label: "Last Name", type: "text" },
               { name: "email", label: "Email Address", type: "email" },
               { name: "password", label: "Password", type: "password" },
-              { name: "adminCode", label: "Admin Code", type: "password" },
+              { name: "adminCode", label: "Admin Code is 9625", type: "password" },
             ].map((field) => (
               <div key={field.name}>
                 <label className="mb-1 block text-sm font-medium text-gray-700">{field.label}</label>
